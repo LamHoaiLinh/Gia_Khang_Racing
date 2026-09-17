@@ -7,7 +7,7 @@ import { fmtTime } from './format.js';
 const FLAGS = {
   melbourne: '🇦🇺', shanghai: '🇨🇳', suzuka: '🇯🇵', bahrain: '🇧🇭', jeddah: '🇸🇦',
   miami: '🇺🇸', montreal: '🇨🇦', monaco: '🇲🇨', barcelona: '🇪🇸', spielberg: '🇦🇹',
-  silverstone: '🇬🇧', spa: '🇧🇪', hungaroring: '🇭🇺', zandvoort: '🇳🇱', monza: '🇮🇹',
+  silverstone: '🇬🇧', spa: 'BỈ', hungaroring: '🇭🇺', zandvoort: '🇳🇱', monza: '🇮🇹',
   madrid: '🇪🇸', baku: '🇦🇿', singapore: '🇸🇬', austin: '🇺🇸', mexico: '🇲🇽',
   interlagos: '🇧🇷', lasvegas: '🇺🇸', lusail: '🇶🇦', yasmarina: '🇦🇪',
 };
@@ -43,7 +43,7 @@ const ENGINE_GLYPH = (() => {
 // The owner's brand mark. Monochrome, no colour, square edges — see the
 // `.tacn-*` rules in css/menus.css.
 const TACN_URL = 'THEAICONSULTINGNETWORK.COM';
-const TACN_FOOTER = `<span class="tacn-mark">PRESENTED BY THE AI CONSULTING NETWORK — ${TACN_URL}</span>`;
+const TACN_FOOTER = '';
 
 // Venue label: each APEX calendar round carries an invented `circuitName`.
 function circuitLabel(race, track) {
@@ -248,11 +248,11 @@ export class UI {
       : '';
     el.innerHTML = `
       <div class="menu-bg" aria-hidden="true"><div class="bg-carbon"></div><div class="bg-grid"></div><div class="bg-vignette"></div></div>
-      ${header('MAIN <small>MENU</small>')}
+      ${header('MENU <small>CHÍNH</small>')}
       ${seasonStrip(champ)}
       <div class="menu-body"><div class="main-nav">
         ${raceNow}
-        <button type="button" class="nav-item pilot-run" data-a="pilot"><span><h3>TACN RACE WEEKEND · GREENWOOD FOREST</h3><p>AVI · FP1 · physical Q1/Q2/Q3 · formation lap · race</p></span></button>
+        <button type="button" class="nav-item pilot-run" data-a="pilot"><span><h3>CUỐI TUẦN ĐUA TACN · RỪNG GREENWOOD</h3><p>AVI · FP1 · phân hạng Q1/Q2/Q3 thực chiến · vòng khởi động · đua chính</p></span></button>
         <button type="button" class="nav-item" data-a="quick"><span><h3>QUICK RACE</h3><p>Jump straight into a race weekend — any team, any circuit</p></span></button>
         ${champTile}
         <button type="button" class="nav-item" data-a="trial"><span><h3>TIME TRIAL</h3><p>Empty track, low fuel, soft tyres — chase the perfect lap</p></span></button>

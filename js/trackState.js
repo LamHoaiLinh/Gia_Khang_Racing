@@ -13,7 +13,7 @@ export const TRACK_STATE_LIMITS = Object.freeze({
 
 export const TRACK_PROFILES = Object.freeze({
   spa: Object.freeze({
-    publicName: 'Greenwood Forest Circuit',
+    publicName: 'Trường đua Rừng Greenwood',
     shade: 0.70,
     bump: 0.0075,
     camber: 0.045,

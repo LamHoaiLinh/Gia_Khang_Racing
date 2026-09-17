@@ -73,7 +73,7 @@ export const CALENDAR = [
   { round: 9,  trackId: 'barcelona',   gp: 'Barcelona GP',   circuitName: 'Terra Alta Circuit',             date: '2026-06-14', laps: 66 },
   { round: 10, trackId: 'spielberg',   gp: 'Spielberg GP',   circuitName: 'Highland Crown Raceway',         date: '2026-06-28', laps: 71 },
   { round: 11, trackId: 'silverstone', gp: 'Silverstone GP', circuitName: 'Northgate Aerodrome Circuit',    date: '2026-07-05', laps: 52 },
-  { round: 12, trackId: 'spa',         gp: 'Spa GP',         circuitName: 'Greenwood Forest Circuit',       date: '2026-07-19', laps: 44 },
+  { round: 12, trackId: 'spa',         gp: 'GP Bỉ',          circuitName: 'Trường đua Rừng Greenwood',     date: '2026-07-19', laps: 44 },
   { round: 13, trackId: 'hungaroring', gp: 'Budapest GP',    circuitName: 'Danube Basin Raceway',           date: '2026-07-26', laps: 70 },
   { round: 14, trackId: 'zandvoort',   gp: 'Zandvoort GP',   circuitName: 'North Dune Circuit',             date: '2026-08-23', laps: 72 },
   { round: 15, trackId: 'monza',       gp: 'Monza GP',       circuitName: 'Royal Park Speedway',            date: '2026-09-06', laps: 53 },

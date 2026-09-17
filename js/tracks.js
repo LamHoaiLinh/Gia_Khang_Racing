@@ -215,7 +215,7 @@ export const TRACKS = {
   },
   spa: {
     name: 'Circuit de Spa-Francorchamps',
-    location: 'Stavelot, Belgium',
+    location: 'Stavelot, Bỉ',
     country: 'BEL',
     lengthKm: 7.004,
     width: 13,
