@@ -1,0 +1,8 @@
+GIA KHANG RACING
+=================
+Cách chạy trên Windows:
+1. Giải nén/toàn bộ repo vào một thư mục.
+2. Nhấp đúp CHAY_GIA_KHANG_RACING.bat.
+3. Trình duyệt sẽ mở http://127.0.0.1:8341/
+
+Không mở index.html trực tiếp bằng file:// vì game dùng ES Modules/WebGL.
