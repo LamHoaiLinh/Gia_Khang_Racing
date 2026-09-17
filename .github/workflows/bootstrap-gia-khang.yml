@@ -1,0 +1,132 @@
+name: Bootstrap Gia Khang Racing
+
+on:
+  push:
+    paths:
+      - '.github/workflows/bootstrap-gia-khang.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Preserve Vietnamese entry page
+        run: cp index.html /tmp/index-gia-khang.html
+
+      - name: Download pinned upstream source and assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          UPSTREAM_COMMIT='410198faf310fe3376b07f2415083df8b146fff1'
+          curl -L --fail --retry 3 \
+            "https://codeload.github.com/ahacker-1/apex-formula-2026/tar.gz/${UPSTREAM_COMMIT}" \
+            -o /tmp/apex-formula.tar.gz
+          rm -rf /tmp/apex-src
+          mkdir -p /tmp/apex-src
+          tar -xzf /tmp/apex-formula.tar.gz -C /tmp/apex-src
+          SRC="$(find /tmp/apex-src -mindepth 1 -maxdepth 1 -type d | head -n 1)"
+
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' ! -name '.github' -exec rm -rf {} +
+          rsync -a --exclude='.github' "$SRC/" ./
+          cp /tmp/index-gia-khang.html index.html
+
+      - name: Add Gia Khang Racing launch files
+        shell: bash
+        run: |
+          cat > local_server.py <<'PY'
+          from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+          import os, webbrowser, threading, time
+
+          PORT = 8341
+          os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+          def open_browser():
+              time.sleep(0.8)
+              webbrowser.open(f'http://127.0.0.1:{PORT}/')
+
+          threading.Thread(target=open_browser, daemon=True).start()
+          print(f'Gia Khang Racing: http://127.0.0.1:{PORT}/')
+          ThreadingHTTPServer(('127.0.0.1', PORT), SimpleHTTPRequestHandler).serve_forever()
+          PY
+
+          cat > CHAY_GIA_KHANG_RACING.bat <<'BAT'
+          @echo off
+          chcp 65001 >nul
+          cd /d "%~dp0"
+          title Gia Khang Racing
+          where py >nul 2>nul
+          if %errorlevel%==0 (
+            py local_server.py
+            goto :eof
+          )
+          where python >nul 2>nul
+          if %errorlevel%==0 (
+            python local_server.py
+            goto :eof
+          )
+          echo Khong tim thay Python tren may.
+          echo Cai Python hoac mo terminal tai thu muc game va chay mot local web server.
+          pause
+          BAT
+
+          cat > HUONG_DAN.txt <<'TXT'
+          GIA KHANG RACING
+          =================
+          Cách chạy trên Windows:
+          1. Giải nén/toàn bộ repo vào một thư mục.
+          2. Nhấp đúp CHAY_GIA_KHANG_RACING.bat.
+          3. Trình duyệt sẽ mở http://127.0.0.1:8341/
+
+          Không mở index.html trực tiếp bằng file:// vì game dùng ES Modules/WebGL.
+          TXT
+
+          touch .nojekyll
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('package.json')
+          data = json.loads(p.read_text(encoding='utf-8'))
+          data['name'] = 'gia-khang-racing'
+          data['description'] = 'Gia Khang Racing - bản Việt hoá chạy local web'
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+          if [ -f README.md ]; then cp README.md README_UPSTREAM.md; fi
+          cat > README.md <<'MD'
+          # Gia Khang Racing
+
+          Bản Việt hoá của **APEX FORMULA 2026**, giữ nguyên gameplay, AI, vật lý xe, đường đua, âm thanh tổng hợp, model xe và tài nguyên đồ hoạ của bản gốc; tên hiển thị được đổi thành **Gia Khang Racing**.
+
+          ## Chạy local trên Windows
+          Nhấp đúp `CHAY_GIA_KHANG_RACING.bat`. Game sẽ mở tại `http://127.0.0.1:8341/`.
+
+          Không mở `index.html` trực tiếp bằng `file://` vì trình duyệt chặn một số ES Modules/WebGL assets khi chạy theo cách đó.
+
+          ## Nguồn gốc
+          Mã nguồn và tài nguyên nền được đồng bộ từ `ahacker-1/apex-formula-2026` tại commit `410198faf310fe3376b07f2415083df8b146fff1`. Bản gốc sử dụng Apache-2.0; thư viện Three.js giữ giấy phép MIT tương ứng trong thư mục `LICENSES`.
+
+          File `README_UPSTREAM.md` lưu README của dự án gốc để đối chiếu.
+          MD
+
+      - name: Commit full source and assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Đồng bộ đầy đủ Gia Khang Racing Việt hoá'
+          git push origin HEAD:main
