@@ -1,22 +1,27 @@
 name: Add How To Play
+
 on:
   push:
     paths:
       - '.github/workflows/add-how-to-play.yml'
   workflow_dispatch:
+
 permissions:
   contents: write
+
 jobs:
   patch:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Add Vietnamese how-to-play screen
-        shell: python {0}
+        shell: bash
         run: |
+          python - <<'PY'
           from pathlib import Path
+
           p = Path('js/ui.js')
           s = p.read_text(encoding='utf-8')
 
@@ -51,6 +56,7 @@ jobs:
           <p><strong>Xe bạn có một cục pin điện giống như “bình năng lượng”.</strong><br>
           Khi bạn phanh hoặc nhả ga giảm tốc thì xe có thể <strong>nạp điện lại vào pin</strong>.<br>
           Khi bạn tăng tốc, xe có thể <strong>lấy điện từ pin ra để xe mạnh hơn</strong>.</p>
+
           <p style="font-size:18px;"><strong>ERS chính là cách bạn quyết định: lúc này nên ưu tiên “sạc pin” hay “xài pin”.</strong></p>
           <ul style="padding-left:24px;margin:8px 0 18px;">
             <li style="margin:9px 0;"><strong>ERS THU HỒI</strong> = <strong>chế độ sạc pin</strong>. Xe chạy yếu hơn một chút nhưng pin nạp lại nhanh hơn. Dùng khi pin gần hết hoặc đang ở đoạn mà bạn chưa cần vượt ai. Hiểu như điện thoại bật “tiết kiệm pin”.</li>
@@ -58,9 +64,11 @@ jobs:
             <li style="margin:9px 0;"><strong>ERS TẤN CÔNG</strong> = <strong>xài pin để xe mạnh hơn</strong>. Xe tăng tốc tốt hơn nhưng pin tụt nhanh. Dùng khi bạn muốn vượt xe trước, thoát cua nhanh hoặc không muốn xe sau vượt mình.</li>
             <li style="margin:9px 0;"><strong>Giữ SPACE</strong> = <strong>Turbo điện</strong>. Đây là mức tăng tốc mạnh hơn nữa. Bạn giữ SPACE thì xe lấy rất nhiều điện trong pin để tăng tốc mạnh trong vài giây. Pin sẽ tụt rất nhanh.</li>
           </ul>
+
           <div style="padding:12px 16px;margin:14px 0 24px;background:rgba(225,6,0,.14);border:1px solid rgba(225,6,0,.55);font-size:18px;font-weight:800;color:#fff;">
             THU HỒI = sạc pin → CÂN BẰNG = chạy thường → TẤN CÔNG = chạy mạnh → SPACE = tăng tốc cực mạnh.
           </div>
+
           <h2 style="margin:0 0 10px;color:#fff;font-size:25px;">CÁC PHÍM CHÍNH BẠN NÊN NHỚ</h2>
           <ul style="padding-left:24px;margin:8px 0 20px;">
             <li style="margin:8px 0;"><strong>W hoặc ↑</strong>: ga; <strong>S hoặc ↓</strong>: phanh/lùi; <strong>A/D hoặc ←/→</strong>: đánh lái.</li>
@@ -71,6 +79,7 @@ jobs:
             <li style="margin:8px 0;"><strong>N</strong>: bật/tắt tên tay đua trên xe AI; <strong>M</strong>: tắt/bật âm thanh; <strong>J</strong>: xuất Ghost Replay; <strong>ESC</strong>: tạm dừng.</li>
             <li style="margin:8px 0;"><strong>Enter</strong>: bắt đầu phiên/chặng khi xe đang chờ xuất phát.</li>
           </ul>
+
           <div class="btn-row" style="justify-content:flex-start;margin-top:22px;">
             <button type="button" class="f1-btn primary" id="btn-guide-back"><span>← QUAY LẠI MENU CHÍNH</span></button>
           </div>
@@ -86,14 +95,17 @@ jobs:
 
           s = s.replace("const TACN_FOOTER = `<span class=\"tacn-mark\">PRESENTED BY THE AI CONSULTING NETWORK — ${TACN_URL}</span>`;", "const TACN_FOOTER = '';", 1)
           p.write_text(s, encoding='utf-8')
+          PY
+
       - name: Commit changes
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add js/ui.js
           if git diff --cached --quiet; then
-            echo "No changes needed"
-          else
-            git commit -m "Thêm mục Hướng dẫn chơi tiếng Việt"
-            git push
+            echo "Nothing to commit"
+            exit 0
           fi
+          git commit -m "Thêm mục Hướng dẫn chơi tiếng Việt"
+          git push
