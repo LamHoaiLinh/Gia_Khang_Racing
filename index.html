@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gia Khang Racing</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23090b11'/%3E%3Cpath d='M10 44 25 15h12L24 44zm23 0 15-29h8L42 44z' fill='%23e10600'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/menus.css">
+<script type="importmap">
+{ "imports": { "three": "./lib/three.module.js" } }
+</script>
+</head>
+<body>
+<div id="app"></div>
+<div id="ui-root">
+  <div id="screen-boot" class="screen active">
+    <div class="boot-inner">
+      <div class="boot-logo">GIA KHANG <span>RACING</span></div>
+      <div class="boot-sub">MÔ PHỎNG ĐUA XE</div>
+      <div class="boot-bar"><div id="boot-progress"></div></div>
+      <div id="boot-status">ĐANG TẢI TÀI NGUYÊN…</div>
+    </div>
+  </div>
+  <div id="screen-main" class="screen"></div>
+  <div id="screen-team" class="screen"></div>
+  <div id="screen-track" class="screen"></div>
+  <div id="screen-settings" class="screen"></div>
+  <div id="screen-standings" class="screen"></div>
+  <div id="screen-loading" class="screen"></div>
+  <div id="screen-results" class="screen"></div>
+  <div id="screen-pause" class="screen"></div>
+  <div id="hud"></div>
+</div>
+<script>
+(() => {
+  const EXACT = {"APEX": "GIA KHANG", "FORMULA": "RACING", "RACE": "ĐUA", "MAIN MENU": "MENU CHÍNH", "MAIN": "CHÍNH", "MENU": "MENU", "CHAMPIONSHIP": "GIẢI VÔ ĐỊCH", "STANDINGS": "BẢNG XẾP HẠNG", "SEASON COMPLETE": "MÙA GIẢI ĐÃ HOÀN TẤT", "NEW SEASON": "MÙA GIẢI MỚI", "RACE NOW": "ĐUA NGAY", "QUICK RACE": "ĐUA NHANH", "TIME TRIAL": "CHẠY TÍNH GIỜ", "SETTINGS": "CÀI ĐẶT", "DRIVERS": "TAY ĐUA", "CONSTRUCTORS": "ĐỘI ĐUA", "BACK": "QUAY LẠI", "CONTINUE": "TIẾP TỤC", "START RACE": "BẮT ĐẦU ĐUA", "NEXT ROUND": "CHẶNG TIẾP THEO", "SELECT CIRCUIT": "CHỌN ĐƯỜNG ĐUA", "CHOOSE YOUR DRIVER": "CHỌN TAY ĐUA", "QUALIFYING": "PHÂN HẠNG", "CLASSIFICATION": "KẾT QUẢ", "POS": "HẠNG", "DRIVER": "TAY ĐUA", "TEAM": "ĐỘI", "TIME": "THỜI GIAN", "GAP": "CÁCH", "STOPS": "LẦN PIT", "BEST LAP": "VÒNG NHANH NHẤT", "PTS": "ĐIỂM", "POINTS": "ĐIỂM", "WINS": "CHIẾN THẮNG", "LEADER": "DẪN ĐẦU", "POLE": "POLE", "PAUSED": "TẠM DỪNG", "RESUME": "TIẾP TỤC", "RESTART": "CHƠI LẠI", "QUIT TO MENU": "VỀ MENU", "RESTART RACE": "ĐUA LẠI", "RUN IT AGAIN": "CHẠY LẠI", "RACE DISTANCE": "CỰ LY ĐUA", "AI DIFFICULTY": "ĐỘ KHÓ AI", "ASSISTS": "HỖ TRỢ", "DISPLAY": "HIỂN THỊ", "BEHAVIOUR": "HÀNH VI", "AUDIO": "ÂM THANH", "ROOKIE": "TÂN BINH", "ELITE": "TINH NHUỆ", "OFF": "TẮT", "ON": "BẬT", "AUTO": "TỰ ĐỘNG", "MANUAL": "SỐ SÀN", "LOW": "THẤP", "MED": "VỪA", "HIGH": "CAO", "CALM": "ÊM", "BALANCED": "CÂN BẰNG", "DIRECT": "TRỰC TIẾP", "TIGHT": "GẦN", "BROADCAST": "TRUYỀN HÌNH", "CINEMATIC": "ĐIỆN ẢNH", "FOCUSED": "HẸP", "NATURAL": "TỰ NHIÊN", "WIDE": "RỘNG", "MUTE": "TẮT TIẾNG", "RESET TO DEFAULTS": "KHÔI PHỤC MẶC ĐỊNH", "RACE LOAD INTERRUPTED": "TẢI CHẶNG ĐUA BỊ GIÁN ĐOẠN", "RETRY": "THỬ LẠI", "RACE CLASSIFICATION": "KẾT QUẢ CUỘC ĐUA", "QUALIFYING CLASSIFICATION": "KẾT QUẢ PHÂN HẠNG", "TIME TRIAL COMPLETE": "HOÀN TẤT CHẠY TÍNH GIỜ", "YOUR SEASON": "MÙA GIẢI CỦA BẠN", "POINTS PROGRESS": "TIẾN ĐỘ ĐIỂM", "WIN": "THẮNG", "PODIUM": "PODIUM", "OUT OF POINTS": "NGOÀI NHÓM CÓ ĐIỂM", "NO RESULT": "KHÔNG CÓ KẾT QUẢ", "SEASON": "MÙA GIẢI", "COMPLETE": "HOÀN TẤT", "WORLD CHAMPION": "VÔ ĐỊCH THẾ GIỚI", "STREET": "ĐƯỜNG PHỐ", "NIGHT": "BAN ĐÊM", "TWILIGHT": "CHẠNG VẠNG", "HOTLAP": "VÒNG NHANH", "LAPS": "VÒNG", "CORNERS": "GÓC CUA", "RACE ENGINEER": "KỸ SƯ ĐƯỜNG ĐUA", "VIRTUAL SAFETY CAR": "XE AN TOÀN ẢO", "GREEN FLAG": "CỜ XANH", "FASTEST LAP": "VÒNG NHANH NHẤT", "DONE": "XONG", "FLYING": "VÒNG TÍNH GIỜ", "FORMATION": "VÒNG KHỞI ĐỘNG", "PRACTICE": "LUYỆN TẬP", "TRACK LIVE": "ĐƯỜNG ĐUA ĐANG HOẠT ĐỘNG", "OUT LAP": "VÒNG RA PIT", "PIT": "PIT", "OUT": "RỜI CUỘC", "AHEAD": "PHÍA TRƯỚC", "BEHIND": "PHÍA SAU", "CURRENT": "HIỆN TẠI", "LAST": "VÒNG TRƯỚC", "BEST": "TỐT NHẤT", "DELTA": "CHÊNH LỆCH", "TYRE": "LỐP", "FUEL": "NHIÊN LIỆU", "MEDIUM": "TRUNG BÌNH", "SOFT": "MỀM", "HARD": "CỨNG", "INTER": "LỐP TRUNG GIAN", "WET": "LỐP MƯA", "SELECT TYRE COMPOUND": "CHỌN LOẠI LỐP", "DURABLE": "BỀN", "HEAVY RAIN": "MƯA LỚN", "LIGHT RAIN": "MƯA NHẸ", "CAR READY · CHASE CAMERA": "XE ĐÃ SẴN SÀNG · CAMERA BÁM ĐUÔI", "PRESS ENTER TO START": "NHẤN ENTER ĐỂ BẮT ĐẦU", "START SESSION": "BẮT ĐẦU PHIÊN", "RE-RUN QUALIFYING": "CHẠY LẠI PHÂN HẠNG", "CAR": "XE", "GRAPHICS RESTORED": "ĐỒ HỌA ĐÃ KHÔI PHỤC", "READY": "SẴN SÀNG"};
+  const PHRASES = [["WELCOME TO APEX FORMULA", "CHÀO MỪNG ĐẾN GIA KHANG RACING"], ["APEX FORMULA 2026", "GIA KHANG RACING"], ["APEX FORMULA", "GIA KHANG RACING"], ["THREE THINGS BEFORE LIGHTS OUT", "BA ĐIỀU CẦN BIẾT TRƯỚC KHI XUẤT PHÁT"], ["GOT IT — START DRIVING", "ĐÃ HIỂU — BẮT ĐẦU LÁI"], ["1 · DRIVE", "1 · LÁI XE"], ["2 · DEPLOY", "2 · KÍCH HOẠT"], ["3 · ADAPT", "3 · THÍCH ỨNG"], ["throttle", "ga"], ["brake/reverse", "phanh/lùi"], ["steer", "đánh lái"], ["Hold", "Giữ"], ["for electric override", "để tăng công suất điện"], ["Tap", "Nhấn"], ["to change ERS mode", "để đổi chế độ ERS"], ["enters cockpit/cycles cameras", "vào buồng lái/chuyển camera"], ["changes dash page", "đổi trang đồng hồ"], ["pauses", "tạm dừng"], ["Continue Round", "Tiếp tục chặng"], ["of 24", "/ 24"], ["View the final", "Xem bảng xếp hạng cuối mùa"], ["standings", ""], ["Start a fresh", "Bắt đầu mới"], ["championship", "giải vô địch"], ["replaces the finished one", "thay thế mùa đã kết thúc"], ["Full", "Đầy đủ"], ["season — 24 rounds, full calendar, points battle", "mùa giải — 24 chặng, đủ lịch, tranh điểm"], ["skip qualifying", "bỏ qua phân hạng"], ["Jump straight into a race weekend — any team, any circuit", "Vào thẳng cuối tuần đua — chọn bất kỳ đội và đường đua nào"], ["Empty track, low fuel, soft tyres — chase the perfect lap", "Đường trống, ít nhiên liệu, lốp mềm — chinh phục vòng chạy hoàn hảo"], ["Drivers & Constructors championship tables", "Bảng xếp hạng tay đua và đội đua"], ["Difficulty, race distance, assists, audio, graphics", "Độ khó, cự ly, hỗ trợ, âm thanh, đồ họa"], ["drive", "lái xe"], ["override boost", "tăng lực điện"], ["ERS mode", "chế độ ERS"], ["box", "vào pit"], ["camera", "camera"], ["pause", "tạm dừng"], ["an original racing simulation", "mô phỏng đua xe"], ["grid —", "danh sách —"], ["teams ·", "đội ·"], ["drivers · original line-ups", "tay đua · đội hình gốc"], ["Hover or focus a driver for pace / consistency / racecraft", "Di chuột hoặc chọn tay đua để xem tốc độ / ổn định / kỹ năng đua"], ["power unit", "động cơ"], ["Car livery", "Màu sơn xe"], ["number", "số"], ["calendar — 24 rounds", "lịch thi đấu — 24 chặng"], ["Corner counts estimated from circuit geometry", "Số góc cua được ước tính từ hình học đường đua"], ["kilometres", "km"], ["Race weekend format", "Thể thức cuối tuần đua"], ["How fast the field races", "Tốc độ của các đối thủ"], ["Laps per race", "Số vòng mỗi cuộc đua"], ["One-lap shootout sets your grid slot", "Một vòng phân hạng quyết định vị trí xuất phát"], ["Driving aids", "Hỗ trợ lái"], ["Tames wheelspin out of corners", "Giảm trượt bánh khi thoát cua"], ["Prevents brake lockups", "Chống bó cứng phanh"], ["Automatic or manual (Q/E to shift)", "Tự động hoặc số sàn (Q/E để sang số)"], ["Progressive input filtering and steering return", "Lọc tín hiệu và tự trả lái mượt hơn"], ["On-track information", "Thông tin trên đường đua"], ["Show 3-letter codes above AI cars", "Hiện mã 3 ký tự trên xe AI"], ["Auto adjusts resolution and effects to hold frame rate", "Tự chỉnh độ phân giải và hiệu ứng để giữ FPS"], ["Chase-camera distance, motion and field of view", "Khoảng cách, chuyển động và góc nhìn camera bám đuôi"], ["Driver-eye field-of-view framing", "Góc nhìn từ mắt tay đua"], ["Driver eye height inside the halo", "Độ cao mắt tay đua trong halo"], ["Restrained acceleration and kerb response", "Giảm rung do tăng tốc và gờ kerb"], ["Device and focus handling", "Xử lý thiết bị và cửa sổ"], ["Pause when the game loses focus", "Tự tạm dừng khi chuyển cửa sổ"], ["Show steering and pedal controls on touch devices", "Hiện vô-lăng và bàn đạp trên thiết bị cảm ứng"], ["Engine + effects", "Động cơ + hiệu ứng"], ["Settings save automatically", "Cài đặt được tự động lưu"], ["ROUND ", "CHẶNG "], [" OF ", " / "], ["Race distance:", "Cự ly đua:"], ["Time trial: one flying lap, empty circuit", "Chạy tính giờ: một vòng tính thành tích, đường đua trống"], ["Track width", "Bề rộng đường"], ["street circuit, walls close", "đường phố, tường sát đường"], ["permanent circuit with run-off", "trường đua cố định có vùng thoát"], ["A required race asset could not be loaded. Check your connection, then retry without losing your selection.", "Không tải được một tài nguyên bắt buộc. Hãy thử lại; lựa chọn hiện tại vẫn được giữ."], ["grid set by qualifying", "vị trí xuất phát do phân hạng quyết định"], ["BEST LAP", "VÒNG NHANH NHẤT"], ["FASTEST LAP:", "VÒNG NHANH NHẤT:"], ["NEXT:", "TIẾP THEO:"], ["Round", "Chặng"], ["complete", "hoàn tất"], ["IS THE", "LÀ"], ["WORLD CHAMPION", "VÔ ĐỊCH THẾ GIỚI"], ["ABANDON SEASON", "BỎ MÙA GIẢI"], ["top 6 vs leader", "6 tay đua đầu so với người dẫn đầu"], ["points", "điểm"], ["PRESENTED BY THE AI CONSULTING NETWORK", "ĐƯỢC GIỚI THIỆU BỞI THE AI CONSULTING NETWORK"], ["BUILT BY AI AGENTS", "ĐƯỢC XÂY DỰNG BẰNG AI AGENTS"], ["This entire game was built autonomously by AI. Want this capability in your business?", "Trò chơi gốc được xây dựng tự động bằng AI. Muốn áp dụng năng lực này cho doanh nghiệp?"], ["Race control banner", "Bảng điều hành cuộc đua"], ["Race position tower", "Bảng vị trí cuộc đua"], ["Lap timing", "Thời gian vòng chạy"], ["Sector timing", "Thời gian sector"], ["Cars ahead and behind", "Xe phía trước và phía sau"], ["Fastest lap display", "Hiển thị vòng nhanh nhất"], ["Race engineer message", "Tin nhắn kỹ sư đường đua"], ["Car speed and energy status", "Tốc độ xe và trạng thái năng lượng"], ["Tyre, fuel, and pit status", "Trạng thái lốp, nhiên liệu và pit"], ["Circuit minimap with car positions", "Bản đồ đường đua và vị trí xe"], ["Race messages", "Thông báo cuộc đua"], ["Race start lights", "Đèn xuất phát"], ["Race event banner", "Thông báo sự kiện cuộc đua"], ["Driving heads-up display", "HUD lái xe"], ["SELECT TYRE COMPOUND", "CHỌN LOẠI LỐP"], ["FAST · HIGH DEG", "NHANH · MÒN CAO"], ["DAMP · LIGHT RAIN", "ẨM · MƯA NHẸ"], ["HEAVY RAIN", "MƯA LỚN"], ["Touch driving controls", "Điều khiển cảm ứng"], ["Steer left", "Rẽ trái"], ["Steer right", "Rẽ phải"], ["Electric override", "Tăng lực điện"], ["Brake", "Phanh"], ["Throttle", "Ga"], ["BOX THIS LAP", "VÀO PIT VÒNG NÀY"], ["LIGHTS OUT — IT'S RACING!", "ĐÈN TẮT — BẮT ĐẦU ĐUA!"], ["Green flag. Racing resumed", "Cờ xanh. Cuộc đua tiếp tục"], ["Virtual safety car deployed", "Đã triển khai xe an toàn ảo"], ["CAMERA: CHASE", "CAMERA: BÁM ĐUÔI"], ["CAMERA: COCKPIT", "CAMERA: BUỒNG LÁI"], ["CAMERA: NOSE", "CAMERA: MŨI XE"], ["ERS: HARVEST", "ERS: THU HỒI"], ["ERS: BALANCED", "ERS: CÂN BẰNG"], ["ERS: ATTACK", "ERS: TẤN CÔNG"], ["GRAPHICS:", "ĐỒ HỌA:"], [" · AUTO", " · TỰ ĐỘNG"], ["INITIALIZING AUDIO…", "ĐANG KHỞI TẠO ÂM THANH…"], ["VERIFYING 2026 ENTRY LIST — 11 TEAMS · 22 DRIVERS", "ĐANG KIỂM TRA DANH SÁCH 2026 — 11 ĐỘI · 22 TAY ĐUA"], ["PERSONAL BEST SAVED", "ĐÃ LƯU KỶ LỤC CÁ NHÂN"], ["GHOST EXPORT AVAILABLE IN TIME TRIAL", "CÓ THỂ XUẤT GHOST TRONG CHẾ ĐỘ TÍNH GIỜ"], ["DETERMINISTIC GHOST JSON EXPORTED", "ĐÃ XUẤT GHOST JSON"], ["COMPLETE A LAP TO EXPORT", "HOÀN THÀNH MỘT VÒNG ĐỂ XUẤT"], ["BLUE FLAGS — LET THE LEADER THROUGH", "CỜ XANH DƯƠNG — NHƯỜNG XE DẪN ĐẦU"], ["Blue flags — let the leader through.", "Cờ xanh dương — nhường xe dẫn đầu."], ["FRONT WING DAMAGE — BOX TO REPAIR", "HỎNG CÁNH TRƯỚC — VÀO PIT SỬA"], ["JUMP START — +5s PENALTY", "XUẤT PHÁT SỚM — PHẠT +5 GIÂY"], ["Jump start — that is a five second penalty.", "Xuất phát sớm — phạt 5 giây."], ["TRACK LIMITS — +5s PENALTY", "VƯỢT GIỚI HẠN ĐƯỜNG ĐUA — PHẠT +5 GIÂY"], ["TRACK LIMITS — FINAL WARNING", "GIỚI HẠN ĐƯỜNG ĐUA — CẢNH BÁO CUỐI"], ["WRONG WAY", "SAI HƯỚNG"], ["Last lap — bring it home", "Vòng cuối — đưa xe về đích"], ["These tyres are done — box when ready", "Lốp đã hết hiệu quả — vào pit khi sẵn sàng"], ["On the podium, brilliant job.", "Lên podium, làm rất tốt."], ["Points on the board, well driven.", "Có điểm rồi, lái rất tốt."], ["Superb drive — that is the win!", "Lái tuyệt vời — chiến thắng!"], ["Not our day — we go again next time.", "Hôm nay chưa thuận lợi — lần sau làm lại."], ["Sorry about that — the car let us down.", "Rất tiếc — chiếc xe đã gặp sự cố."], ["FORMATION LAP UNDERWAY", "ĐANG CHẠY VÒNG KHỞI ĐỘNG"], ["FLYING LAP — GO!", "VÒNG TÍNH GIỜ — CHẠY!"], ["CAR LEFT", "XE BÊN TRÁI"], ["CAR RIGHT", "XE BÊN PHẢI"], ["DASH PAGE", "TRANG ĐỒNG HỒ"], ["EXPORT GHOST", "XUẤT GHOST"], ["TYRES 2/2", "LỐP 2/2"], ["RACE 1/2", "ĐUA 1/2"]];
+  function translateCore(s) {
+    if (!s) return s;
+    const lead=(s.match(/^\s*/)||[''])[0], tail=(s.match(/\s*$/)||[''])[0];
+    let core=s.slice(lead.length, s.length-tail.length);
+    if (Object.prototype.hasOwnProperty.call(EXACT, core)) return lead+EXACT[core]+tail;
+    let out=core;
+    for (const [a,b] of PHRASES) if (out.includes(a)) out=out.split(a).join(b);
+    out=out.replace(/^LAP (\d+)(.*)$/,'VÒNG $1$2');
+    out=out.replace(/^RACE (\d+)(.*)$/,'ĐUA $1$2');
+    out=out.replace(/^QUALIFYING(.*)$/,'PHÂN HẠNG$1');
+    out=out.replace(/^PRACTICE(.*)$/,'LUYỆN TẬP$1');
+    out=out.replace(/^ROUND (\d+)(.*)$/,'CHẶNG $1$2');
+    return lead+out+tail;
+  }
+  function trNode(n) {
+    if (n.nodeType===3) { const x=translateCore(n.nodeValue); if(x!==n.nodeValue)n.nodeValue=x; return; }
+    if (n.nodeType!==1) return;
+    for (const a of ['aria-label','title','placeholder']) { const v=n.getAttribute?.(a); if(v){const x=translateCore(v); if(x!==v)n.setAttribute(a,x);} }
+    for (const c of [...n.childNodes]) trNode(c);
+  }
+  window.__GKR_TRANSLATE = trNode;
+  const start=()=>{ trNode(document.body); new MutationObserver(ms=>{for(const m of ms)for(const n of m.addedNodes)trNode(n);}).observe(document.body,{subtree:true,childList:true}); };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
+})();
+</script>
+<script>
+(() => {
+  if (location.protocol === 'file:') {
+    const show = () => {
+      const status = document.getElementById('boot-status');
+      const bar = document.querySelector('.boot-bar');
+      if (bar) bar.style.display = 'none';
+      if (status) {
+        status.innerHTML = 'TRÌNH DUYỆT CHẶN GAME 3D KHI MỞ TRỰC TIẾP BẰNG FILE://<br><br>' +
+          '<span style="color:#fff;font-size:13px;letter-spacing:.06em">HÃY NHẤP ĐÚP FILE <b>CHAY_GIA_KHANG_RACING.bat</b> TRONG THƯ MỤC GAME</span>';
+        status.style.maxWidth = '720px';
+        status.style.lineHeight = '1.6';
+      }
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show, {once:true});
+    else show();
+    return;
+  }
+  const mod = document.createElement('script');
+  mod.type = 'module';
+  mod.src = 'js/main.js';
+  document.body.appendChild(mod);
+})();
+</script>
+</body>
+</html>
