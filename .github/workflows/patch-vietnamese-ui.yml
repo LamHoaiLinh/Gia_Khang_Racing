@@ -1,0 +1,70 @@
+name: Patch Vietnamese UI
+
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-vietnamese-ui.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch Vietnamese labels
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def patch(path, replacements):
+              p = Path(path)
+              s = p.read_text(encoding='utf-8')
+              old = s
+              for a, b in replacements:
+                  s = s.replace(a, b)
+              if s != old:
+                  p.write_text(s, encoding='utf-8')
+                  print('patched', path)
+              else:
+                  print('no change', path)
+
+          patch('js/ui.js', [
+              ("const TACN_FOOTER = `<span class=\"tacn-mark\">PRESENTED BY THE AI CONSULTING NETWORK — ${TACN_URL}</span>`;", "const TACN_FOOTER = '';"),
+              ("header('MAIN <small>MENU</small>')", "header('MENU <small>CHÍNH</small>')"),
+              ("TACN RACE WEEKEND · GREENWOOD FOREST", "CUỐI TUẦN ĐUA TACN · RỪNG GREENWOOD"),
+              ("AVI · FP1 · physical Q1/Q2/Q3 · formation lap · race", "AVI · FP1 · phân hạng Q1/Q2/Q3 thực chiến · vòng khởi động · đua chính"),
+              ("silverstone: '🇬🇧', spa: '🇧🇪', hungaroring: '🇭🇺'", "silverstone: '🇬🇧', spa: 'BỈ', hungaroring: '🇭🇺'"),
+          ])
+
+          patch('js/data-fictional.js', [
+              ("{ round: 12, trackId: 'spa',         gp: 'Spa GP',         circuitName: 'Greenwood Forest Circuit',       date: '2026-07-19', laps: 44 },",
+               "{ round: 12, trackId: 'spa',         gp: 'GP Bỉ',          circuitName: 'Trường đua Rừng Greenwood',     date: '2026-07-19', laps: 44 },"),
+          ])
+
+          patch('js/trackState.js', [
+              ("publicName: 'Greenwood Forest Circuit'", "publicName: 'Trường đua Rừng Greenwood'"),
+          ])
+
+          patch('js/tracks.js', [
+              ("location: 'Stavelot, Belgium'", "location: 'Stavelot, Bỉ'"),
+          ])
+          PY
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add js/ui.js js/data-fictional.js js/trackState.js js/tracks.js
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit -m "Hoàn thiện Việt hoá giao diện Gia Khang Racing"
+          git push
