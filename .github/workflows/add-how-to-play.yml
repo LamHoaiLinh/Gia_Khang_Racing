@@ -14,13 +14,12 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Add Vietnamese how-to-play screen
-        shell: python
+        shell: python {0}
         run: |
           from pathlib import Path
           p = Path('js/ui.js')
           s = p.read_text(encoding='utf-8')
 
-          # Add menu tile once, immediately before Settings.
           guide_btn = '''        <button type="button" class="nav-item" data-a="guide"><span><h3>HƯỚNG DẪN CHƠI</h3><p>ERS, tăng tốc điện, các phím điều khiển và cách sử dụng</p></span></button>\n'''
           settings_marker = '        <button type="button" class="nav-item" data-a="settings"><span><h3>SETTINGS</h3><p>Difficulty, race distance, assists, audio, graphics</p></span></button>'
           if 'data-a="guide"' not in s:
@@ -28,7 +27,6 @@ jobs:
                   raise SystemExit('Không tìm thấy nút Settings để chèn hướng dẫn')
               s = s.replace(settings_marker, guide_btn + settings_marker, 1)
 
-          # Make the guide tile open an internal screen instead of sending an unknown menu action to main.js.
           old_click = """        if (a === 'champNew') this.cb('champNew');\n        else this.cb('menu', a);"""
           new_click = """        if (a === 'guide') this.showGuide();\n        else if (a === 'champNew') this.cb('champNew');\n        else this.cb('menu', a);"""
           if "if (a === 'guide') this.showGuide();" not in s:
@@ -36,7 +34,6 @@ jobs:
                   raise SystemExit('Không tìm thấy bộ xử lý click menu')
               s = s.replace(old_click, new_click, 1)
 
-          # Add a dedicated guide screen using the existing settings screen container.
           if 'showGuide() {' not in s:
               marker = '  // ============ TEAM SELECT ============'
               if marker not in s:
@@ -87,9 +84,7 @@ jobs:
 '''
               s = s.replace(marker, guide_method + marker, 1)
 
-          # Keep the requested footer promotion removed even if a prior file version is restored.
           s = s.replace("const TACN_FOOTER = `<span class=\"tacn-mark\">PRESENTED BY THE AI CONSULTING NETWORK — ${TACN_URL}</span>`;", "const TACN_FOOTER = '';", 1)
-
           p.write_text(s, encoding='utf-8')
       - name: Commit changes
         run: |
